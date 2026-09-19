@@ -9,6 +9,6 @@
                                                                                         required
                                                                                         autocomplete="new-password"></label>
         <button type="submit">Alterar senha</button>
-        <a href="<?= url('barbeiros') ?>">Cancelar</a></form>
+        <a class="cancelar"  href="<?= url('barbeiros') ?>">Cancelar</a></form>
 </section>
 <?php require __DIR__ . '/../layout/footer.php'; ?>

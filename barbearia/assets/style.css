@@ -4,9 +4,9 @@
 
 body {
     margin: 0;
-    background: #494444;
+    background: #757575;
     font: 16px Arial, sans-serif;
-    color: #222
+    color: #010101
 }
 
 header {
@@ -39,11 +39,14 @@ main {
 }
 
 .card {
-    background: #fff;
+    max-width: 720px;
+    background: #444140;
+    color: #20bf55;
     padding: 28px;
     border-radius: 8px;
+    border-style: solid;
+    border-color: #20bf55;
     box-shadow: 0 2px 8px #0001;
-    max-width: 620px
 }
 
 .login {
@@ -78,7 +81,7 @@ input {
 }
 
 button, .button {
-    background: #8b5e34;
+    background: #725ac1;
     color: white;
     border: 0;
     border-radius: 4px;
@@ -90,8 +93,12 @@ button, .button {
 
 .link {
     background: none;
-    color: #0645ad;
+    color: #e40e0e;
     padding: 0
+}
+
+.cancelar{
+    color: #e40e0e;
 }
 
 .danger {
