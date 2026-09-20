@@ -25,6 +25,15 @@ CREATE TABLE barbeiros (
   atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+CREATE TABLE servicos (
+    idServico BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome varchar(120) NOT NULL,
+    preco double NOT NULL,
+    duracao int(2) NOT NULL,
+    status tinyint(4) NOT NULL DEFAULT 1
+) ENGINE=InnoDB;
+
+
 -- Usuário inicial: admin@barbearia.com | senha: password
 INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES
 ('Administrador', 'admin@barbearia.com', '$2y$10$0iJXZ2XYRXcQv200gOn2u.nP4V51CVIlZSC.rayGp3bFlx1.rUToG', 'ADMINISTRADOR');
