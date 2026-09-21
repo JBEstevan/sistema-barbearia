@@ -12,7 +12,7 @@ final class ServicoController
     public function index(): void
     {
         Auth::requireLogin();
-        view('servicos/index', ['servicos' => $this->servicos->listAll()]);
+        view('servicos/index', ['servicos' => $this->servicos->All()]);
     }
 
     public function create(): void
