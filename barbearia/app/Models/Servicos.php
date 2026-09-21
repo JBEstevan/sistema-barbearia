@@ -36,7 +36,7 @@ final class Servicos
     public function atualizar(int $id, string $nome, float $preco, int $duracao): bool
     {
         $sql = 'UPDATE servicos SET nome = :nome, preco = :preco, duracao = :duracao WHERE id = :id';
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
             'nome' => $nome, 'preco' => $preco, 'duracao' => $duracao, 'id' => $id,
@@ -45,7 +45,7 @@ final class Servicos
 
     public function alterarStatus(int $id, int $status): bool
     {
-        $stmt = $this->pdo->prepare('UPDATE servicos SET status = :status WHERE id = :id');
+        $stmt = $this->db->prepare('UPDATE servicos SET status = :status WHERE id = :id');
         return $stmt->execute([
             'status' => $status, 'id' => $id,
         ]);
@@ -53,7 +53,7 @@ final class Servicos
 
     public function excluir(int $id): bool
     {
-        $stmt = $this->pdo->prepare('DELETE FROM servicos WHERE id = :id');
+        $stmt = $this->db->prepare('DELETE FROM servicos WHERE id = :id');
         return $stmt->execute(['id' => $id]);
     }
 

@@ -26,7 +26,7 @@ CREATE TABLE barbeiros (
 ) ENGINE=InnoDB;
 
 CREATE TABLE servicos (
-    idServico BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome varchar(120) NOT NULL,
     preco double NOT NULL,
     duracao int(2) NOT NULL,
