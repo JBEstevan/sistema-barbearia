@@ -1,7 +1,7 @@
 <?php require __DIR__ . '/../layout/header.php';
-$editando = $servicos !== null; ?>
+$editando = $servico !== null; ?>
     <section class="card"><h1><?= e($titulo) ?></h1>
-        <form method="post" action="<?= url($editando ? 'servicos/' . $servicos['id'] . '/atualizar' : 'servicos') ?>">
+        <form method="post" action="<?= url($editando ? 'servicos/' . $servico['id'] . '/atualizar' : 'servicos') ?>">
             <input type="hidden" name="csrf" value="<?= Csrf::token() ?>">
             <label>Nome
                 <input name="nome" maxlength="120" required value="<?= e($servico['nome'] ?? '') ?>">
@@ -13,10 +13,10 @@ $editando = $servicos !== null; ?>
                 <small>Use ponto para os centavos, ex: 35.00</small>
             </label>
             <label>Duração (minutos)
-                <input name="duracao" type="number" step="1" min="1" max="480" required
+                <input name="duracao" type="number" step="1" min="1" max="180" required
                        value="<?= isset($servico['duracao']) ? (int)$servico['duracao'] : '' ?>"
                        placeholder="30">
-                <small>Entre 1 e 480 minutos</small>
+                <small>Entre 1 e 180 minutos</small>
             </label>
             <label class="check">
                 <input name="status" type="checkbox" <?= (!$editando || $servico['status']) ? 'checked' : '' ?>>

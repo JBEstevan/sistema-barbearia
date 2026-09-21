@@ -15,7 +15,7 @@ final class ServicoController
         view('servicos/index', ['servicos' => $this->servicos->listAll()]);
     }
 
-    public function criar(): void
+    public function create(): void
     {
         Auth::requireLogin();
         view('servicos/form', ['servico' => null, 'titulo' => 'Novo serviço']);
@@ -89,7 +89,7 @@ final class ServicoController
             && (int)$duracaoBruta <= 180;
 
         if ($nome === '' || mb_strlen($nome) > 120 || !$precoValido || !$duracaoValida) {
-            flash('erro', 'Informe nome, preço (maior que zero) e duração em minutos (entre 1 e 480) válidos.');
+            flash('erro', 'Informe nome, preço (maior que zero) e duração em minutos (entre 1 e 180) válidos.');
             redirect($rotaEmCasoDeErro);
         }
 

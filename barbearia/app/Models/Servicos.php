@@ -7,54 +7,40 @@ final class Servicos
     {
     }
 
-    public function listAll()
+    public function all(): array
     {
         return $this->db->query('SELECT * FROM servicos ORDER BY nome')->fetchAll();
     }
 
-    public function findById(int $id): ?array
+    public function find(int $id): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM servicos WHERE id = ?');
         $stmt->execute([$id]);
         return $stmt->fetch() ?: null;
     }
 
-    public function addServico(array $data): void
+    /* lista apenas os serviços ativos*/
+    public function ativos(): array
     {
-        $stmt = $this->db->prepare('INSERT INTO servicos (nome, preco, duracao, status) 
-        VALUES (:nome, :preco, :duracao, :status)');
+        return $this->db->query('SELECT * FROM servicos WHERE status = 1 ORDER BY nome')->fetchAll();
+    }
+
+    public function create(array $data): void
+    {
+        $stmt = $this->db->prepare('INSERT INTO servicos (nome, preco, duracao, status) VALUES (:nome, :preco, :duracao, :status)');
         $stmt->execute($data);
     }
 
-    /*lista todos os servicos ativos*/
-    public function listAtivos(): array
+    public function update(int $id, array $data): void
     {
-        $stmt = $this->db->query('SELECT * FROM servicos WHERE status = 1 ORDER BY nome ASC');
-        return $stmt->fetchAll(db::FETCH_ASSOC);
+        $data['id'] = $id;
+        $stmt = $this->db->prepare('UPDATE servicos SET nome=:nome, preco=:preco, duracao=:duracao, status=:status WHERE id=:id');
+        $stmt->execute($data);
     }
 
-    public function atualizar(int $id, string $nome, float $preco, int $duracao): bool
+    public function delete(int $id): void
     {
-        $sql = 'UPDATE servicos SET nome = :nome, preco = :preco, duracao = :duracao WHERE id = :id';
-        $stmt = $this->db->prepare($sql);
-
-        return $stmt->execute([
-            'nome' => $nome, 'preco' => $preco, 'duracao' => $duracao, 'id' => $id,
-        ]);
+        $stmt = $this->db->prepare('DELETE FROM servicos WHERE id = ?');
+        $stmt->execute([$id]);
     }
-
-    public function alterarStatus(int $id, int $status): bool
-    {
-        $stmt = $this->db->prepare('UPDATE servicos SET status = :status WHERE id = :id');
-        return $stmt->execute([
-            'status' => $status, 'id' => $id,
-        ]);
-    }
-
-    public function excluir(int $id): bool
-    {
-        $stmt = $this->db->prepare('DELETE FROM servicos WHERE id = :id');
-        return $stmt->execute(['id' => $id]);
-    }
-
 }

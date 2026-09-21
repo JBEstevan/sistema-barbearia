@@ -16,6 +16,7 @@ try {
 
     $auth = new AuthController(new Usuario($db));
     $barbeiros = new BarbeiroController(new Barbeiro($db));
+    $servicos = new ServicoController(new Servicos($db));
     $route = trim((string)($_GET['r'] ?? ''), '/');
     $method = $_SERVER['REQUEST_METHOD'];
 
@@ -39,6 +40,18 @@ try {
         $barbeiros->update((int)$m[1]);
     } elseif (preg_match('#^barbeiros/(\d+)/excluir$#', $route, $m) && $method === 'POST') {
         $barbeiros->destroy((int)$m[1]);
+    } elseif ($route === 'servicos' && $method === 'GET') {
+        $servicos->index();
+    } elseif ($route === 'servicos/novo' && $method === 'GET') {
+        $servicos->create();
+    } elseif ($route === 'servicos' && $method === 'POST') {
+        $servicos->store();
+    } elseif (preg_match('#^servicos/(\d+)/editar$#', $route, $m) && $method === 'GET') {
+        $servicos->edit((int)$m[1]);
+    } elseif (preg_match('#^servicos/(\d+)/atualizar$#', $route, $m) && $method === 'POST') {
+        $servicos->update((int)$m[1]);
+    } elseif (preg_match('#^servicos/(\d+)/excluir$#', $route, $m) && $method === 'POST') {
+        $servicos->destroy((int)$m[1]);
     } else {
         http_response_code(404);
         trigger_error("Rota não encontrada: {$route}", E_USER_WARNING);
@@ -52,5 +65,5 @@ try {
     // Qualquer outro erro inesperado é registrado no log, sem expor detalhes ao usuário.
     error_log('Erro inesperado: ' . $e->getMessage());
     http_response_code(500);
-    exit('Ocorreu um erro inesperado. Tente novamente mais tarde.');
+    exit('ocorreu um erro inexperado');
 }
