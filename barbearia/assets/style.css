@@ -66,13 +66,16 @@ label {
     font-weight: bold
 }
 
-input {
+input, select, textarea {
     display: block;
     width: 100%;
     margin-top: 6px;
     padding: 10px;
     border: 1px solid #aaa;
-    border-radius: 4px
+    border-radius: 4px;
+    font: inherit;
+    background: #fff;
+    color: #000;
 }
 
 .check input {
@@ -97,7 +100,7 @@ button, .button {
     padding: 0
 }
 
-.cancelar{
+.cancelar {
     color: #e40e0e;
 }
 
@@ -120,15 +123,18 @@ th, td {
 
 .alert {
     padding: 12px;
-    border-radius: 4px
+    border-radius: 4px;
+    margin-bottom: 20px;
 }
 
 .success {
-    background: #d8f1dc
+    background: #d8f1dc;
+    color: #155724;
 }
 
 .error {
-    background: #f8d7da
+    background: #f8d7da;
+    color: #721c24;
 }
 
 @media (max-width: 700px) {

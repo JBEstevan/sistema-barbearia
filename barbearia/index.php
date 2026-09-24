@@ -14,9 +14,15 @@ Auth::start();
 try {
     $db = Database::connect($config);
 
+    $barbeiroModel = new Barbeiro($db);
+    $servicosModel = new Servicos($db);
+    $agendamentoModel = new Agendamento($db);
+
     $auth = new AuthController(new Usuario($db));
-    $barbeiros = new BarbeiroController(new Barbeiro($db));
-    $servicos = new ServicoController(new Servicos($db));
+    $barbeiros = new BarbeiroController($barbeiroModel);
+    $servicos = new ServicoController($servicosModel);
+    $agendamentos = new AgendamentoController($agendamentoModel, $barbeiroModel, $servicosModel);
+
     $route = trim((string)($_GET['r'] ?? ''), '/');
     $method = $_SERVER['REQUEST_METHOD'];
 
@@ -52,6 +58,18 @@ try {
         $servicos->update((int)$m[1]);
     } elseif (preg_match('#^servicos/(\d+)/excluir$#', $route, $m) && $method === 'POST') {
         $servicos->destroy((int)$m[1]);
+    } elseif ($route === 'agendamentos' && $method === 'GET') {
+        $agendamentos->index();
+    } elseif ($route === 'agendamentos/novo' && $method === 'GET') {
+        $agendamentos->create();
+    } elseif ($route === 'agendamentos' && $method === 'POST') {
+        $agendamentos->store();
+    } elseif (preg_match('#^agendamentos/(\d+)/editar$#', $route, $m) && $method === 'GET') {
+        $agendamentos->edit((int)$m[1]);
+    } elseif (preg_match('#^agendamentos/(\d+)/atualizar$#', $route, $m) && $method === 'POST') {
+        $agendamentos->update((int)$m[1]);
+    } elseif (preg_match('#^agendamentos/(\d+)/excluir$#', $route, $m) && $method === 'POST') {
+        $agendamentos->destroy((int)$m[1]);
     } else {
         http_response_code(404);
         trigger_error("Rota não encontrada: {$route}", E_USER_WARNING);
@@ -62,8 +80,8 @@ try {
     http_response_code(500);
     exit('Não foi possível conectar ao banco. Confira config/config.php.');
 } catch (Throwable $e) {
-    // Qualquer outro erro inesperado é registrado no log, sem expor detalhes ao usuário.
+    // Qualquer outro erro é registrasndo no log.
     error_log('Erro inesperado: ' . $e->getMessage());
     http_response_code(500);
-    exit('ocorreu um erro inexperado');
+    exit('ocorreu um erro inesperado');
 }
