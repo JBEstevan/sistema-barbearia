@@ -2,15 +2,25 @@
     box-sizing: border-box
 }
 
+:root {
+    --cinza: #9c9a9a;
+    --cinza-claro: #C0C0C0;
+    --cinza-escuro: #454546;
+    --dourado: #d4a413;
+    --amarelo: #efb810;
+    --amarelo-claro: #f3c332;
+    --preto: #000000
+}
+
 body {
     margin: 0;
-    background: #757575;
+    background: var(--cinza-escuro);
     font: 16px Arial, sans-serif;
-    color: #010101
+    color: var(--amarelo-claro);
 }
 
 header {
-    background: #201b17;
+    background: var(--dourado);
     color: #fff;
     padding: 15px max(5%, 20px);
     display: flex;
@@ -40,12 +50,13 @@ main {
 
 .card {
     max-width: 720px;
-    background: #444140;
-    color: #20bf55;
+    margin: 0 auto;
+    background: var(--cinza);
+    color: var(--cinza-escuro);
     padding: 28px;
     border-radius: 8px;
     border-style: solid;
-    border-color: #20bf55;
+    border-color: var(--amarelo);
     box-shadow: 0 2px 8px #0001;
 }
 
@@ -66,13 +77,16 @@ label {
     font-weight: bold
 }
 
-input {
+input, select, textarea {
     display: block;
     width: 100%;
     margin-top: 6px;
     padding: 10px;
     border: 1px solid #aaa;
-    border-radius: 4px
+    border-radius: 4px;
+    font: inherit;
+    background: #fff;
+    color: var(--preto);
 }
 
 .check input {
@@ -81,8 +95,8 @@ input {
 }
 
 button, .button {
-    background: #725ac1;
-    color: white;
+    background: var(--amarelo-claro);
+    color: var(--preto);
     border: 0;
     border-radius: 4px;
     padding: 10px 14px;
@@ -97,7 +111,7 @@ button, .button {
     padding: 0
 }
 
-.cancelar{
+.cancelar {
     color: #e40e0e;
 }
 
@@ -107,8 +121,9 @@ button, .button {
 
 table {
     width: 100%;
-    background: #fff;
+    background: var(--cinza-claro);
     border-collapse: collapse;
+    color: var(--preto);
     box-shadow: 0 2px 8px #0001
 }
 
@@ -120,15 +135,18 @@ th, td {
 
 .alert {
     padding: 12px;
-    border-radius: 4px
+    border-radius: 4px;
+    margin-bottom: 20px;
 }
 
 .success {
-    background: #d8f1dc
+    background: #d8f1dc;
+    color: #155724;
 }
 
 .error {
-    background: #f8d7da
+    background: #f8d7da;
+    color: #721c24;
 }
 
 @media (max-width: 700px) {
