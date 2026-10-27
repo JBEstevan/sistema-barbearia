@@ -175,3 +175,130 @@ th, td {
         margin-top: 8px
     }
 }
+
+.auth {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--cinza);
+    color: var(--dourado);
+    padding: 32px;
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+
+.auth-title {
+    margin: 0 0 4px;
+    font-size: 24px;
+}
+
+.auth-subtitle {
+    margin: 0 0 24px;
+    color: var(--cinza-escuro);
+    font-size: 14px;
+}
+
+.campo {
+    margin-bottom: 18px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.campo input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--amarelo);
+    border-radius: 4px;
+    background: var(--cinza-claro);
+    color: var(--dourado);
+    font-size: 15px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.campo input:focus-visible {
+    outline: none;
+    border-color: var(--cinza-claro);
+    box-shadow: 0 0 0 3px rgba(169, 113, 63, .25);
+}
+
+.campo.invalido input {
+    border-color: var(--dourado);
+}
+
+.campo-erro {
+    display: block;
+    min-height: 16px;
+    margin-top: 5px;
+    color: red;
+    font-size: 13px;
+}
+
+.campo-senha {
+    position: relative;
+}
+
+.alternar-senha {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: 0;
+    color: var(--dourado);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 6px;
+}
+
+.auth-cta {
+    width: 100%;
+    margin-top: 6px;
+    padding: 12px;
+    background: var(--cinza-escuro);
+    color: var(--amarelo-claro);
+    border: 0;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .15s ease, transform .1s ease;
+}
+
+.auth-cta:hover {
+    background: var(--cinza-claro);
+}
+
+.auth-cta:active {
+    transform: scale(.98);
+}
+
+.auth-cta[disabled] {
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+.auth-card.tremer {
+    animation: tremer .35s ease;
+}
+
+@keyframes tremer {
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-card.tremer { animation: none; }
+    .auth-cta { transition: none; }
+}
