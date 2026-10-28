@@ -17,7 +17,7 @@ final class Agendamento
         return $this->db->query($sql)->fetchAll();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?object
     {
         $stmt = $this->db->prepare(
             'SELECT a.*, b.nome AS barbeiro_nome, s.nome AS servico_nome 

@@ -19,12 +19,12 @@ final class AuthController
         $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL) ?: '';
         $senha = (string)($_POST['senha'] ?? '');
         $usuario = $email ? $this->usuarios->byEmail($email) : null;
-        if (!$usuario || !password_verify($senha, $usuario['senha_hash'])) {
+        if (!$usuario || !password_verify($senha, $usuario->senha_hash)) {
             flash('erro', 'E-mail ou senha inválidos.');
             redirect('login');
         }
         Auth::login($usuario);
-        $this->usuarios->updateLastAccess((int)$usuario['id']);
+        $this->usuarios->updateLastAccess((int)$usuario->id);
         redirect('barbeiros');
     }
 
@@ -49,7 +49,7 @@ final class AuthController
         $nova = (string)($_POST['nova_senha'] ?? '');
         $confirmacao = (string)($_POST['confirmacao_senha'] ?? '');
         $usuario = $this->usuarios->findForPassword((int)Auth::user()['id']);
-        if (!$usuario || !password_verify($atual, $usuario['senha_hash'])) {
+        if (!$usuario || !password_verify($atual, $usuario->senha_hash)) {
             flash('erro', 'A senha atual está incorreta.');
             redirect('senha');
         }
@@ -57,7 +57,7 @@ final class AuthController
             flash('erro', 'A nova senha precisa ter ao menos 8 caracteres e ser igual à confirmação.');
             redirect('senha');
         }
-        $this->usuarios->updatePassword((int)$usuario['id'], password_hash($nova, PASSWORD_DEFAULT));
+        $this->usuarios->updatePassword((int)$usuario->id, password_hash($nova, PASSWORD_DEFAULT));
         flash('sucesso', 'Senha alterada com sucesso.');
         redirect('barbeiros');
     }

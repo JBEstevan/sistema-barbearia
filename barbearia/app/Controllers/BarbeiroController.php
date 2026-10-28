@@ -48,8 +48,11 @@ final class BarbeiroController
     {
         Auth::requireLogin();
         Csrf::validate();
-        $this->barbeiros->delete($id);
-        flash('sucesso', 'Barbeiro removido.');
+        if ($this->barbeiros->delete($id) === 0) {
+            flash('erro', 'Barbeiro não encontrado.');
+        } else {
+            flash('sucesso', 'Barbeiro removido.');
+        }
         redirect('barbeiros');
     }
 

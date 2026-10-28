@@ -88,7 +88,7 @@ barbearia/
 │   ├── Core/
 │   │   ├── Auth.php                    # Controle de Sessão e Login
 │   │   ├── Csrf.php                    # Proteção contra ataques CSRF
-│   │   ├── Database.php                # Conexão PDO segura
+│   │   ├── Database.php                # Conexão PDO segura (retorna objetos: FETCH_OBJ)
 │   │   ├── helpers.php                 # Funções auxiliares (url, flash, redirect, e)
 │   │   └── view.php                    # Renderização de views
 │   ├── Models/
@@ -132,3 +132,7 @@ Todas as validações são executadas no servidor pelo PHP:
    - Hash de senhas com `password_hash()` (Bcrypt).
    - Consultas com Prepared Statements no PDO para prevenção contra SQL Injection.
    - Sanitização de saída com `htmlspecialchars` contra XSS.
+5. **Acesso a dados (PDO):**
+   - A conexão (`Database::connect`) define `PDO::FETCH_OBJ` como modo padrão: as consultas devolvem **objetos** (`$barbeiro->nome`) em vez de arrays (`$barbeiro['nome']`).
+   - Nos Models de `Usuario` e `Barbeiro`, as consultas usam `prepare` + `bindValue` (com tipo `PDO::PARAM_*`) + `execute`.
+   - `Barbeiro::delete()` devolve o número de linhas removidas (`rowCount()`), permitindo avisar quando o registro não existe.

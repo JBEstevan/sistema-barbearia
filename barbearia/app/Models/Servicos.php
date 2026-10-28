@@ -12,7 +12,7 @@ final class Servicos
         return $this->db->query('SELECT * FROM servicos ORDER BY nome')->fetchAll();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?object
     {
         $stmt = $this->db->prepare('SELECT * FROM servicos WHERE id = ?');
         $stmt->execute([$id]);

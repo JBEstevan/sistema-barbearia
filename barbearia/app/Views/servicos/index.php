@@ -14,12 +14,12 @@
         <tbody>
         <?php foreach ($servicos as $servico): ?>
             <tr>
-            <td><?= e($servico['nome']) ?></td>
-            <td>R$ <?= number_format((float)$servico['preco'], 2, ',', '.') ?></td>
-            <td><?= (int)$servico['duracao'] ?> min</td>
-            <td><?= $servico['status'] ? 'Ativo' : 'Inativo' ?></td>
-            <td><a href="<?= url('servicos/' . $servico['id'] . '/editar') ?>">Editar</a>&nbsp;&nbsp;&nbsp;<form
-                    class="inline" method="post" action="<?= url('servicos/' . $servico['id'] . '/excluir') ?>"
+            <td><?= e($servico->nome) ?></td>
+            <td>R$ <?= number_format((float)$servico->preco, 2, ',', '.') ?></td>
+            <td><?= (int)$servico->duracao ?> min</td>
+            <td><?= $servico->status ? 'Ativo' : 'Inativo' ?></td>
+            <td><a href="<?= url('servicos/' . $servico->id . '/editar') ?>">Editar</a>&nbsp;&nbsp;&nbsp;<form
+                    class="inline" method="post" action="<?= url('servicos/' . $servico->id . '/excluir') ?>"
                     onsubmit="return confirm('Remover este serviço?');"><input type="hidden" name="csrf"
                                                                                value="<?= Csrf::token() ?>">
                     <button class="link danger">Excluir</button>

@@ -19,7 +19,7 @@ final class AgendamentoController
     public function create(): void
     {
         Auth::requireLogin();
-        $barbeirosAtivos = array_filter($this->barbeiros->all(), fn($b) => (int)$b['ativo'] === 1);
+        $barbeirosAtivos = array_filter($this->barbeiros->all(), fn($b) => (int)$b->ativo === 1);
         $servicosAtivos = $this->servicos->ativos();
 
         if (empty($barbeirosAtivos)) {

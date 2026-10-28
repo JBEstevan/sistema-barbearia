@@ -25,10 +25,10 @@ final class Auth
         return $_SESSION['usuario'] ?? null;
     }
 
-    public static function login(array $user): void
+    public static function login(object $user): void
     {
         session_regenerate_id(true);
-        $_SESSION['usuario'] = ['id' => (int)$user['id'], 'nome' => $user['nome'], 'perfil' => $user['perfil']];
+        $_SESSION['usuario'] = ['id' => (int)$user->id, 'nome' => $user->nome, 'perfil' => $user->perfil];
     }
 
     public static function logout(): void
