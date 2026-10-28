@@ -15,13 +15,13 @@
     <tbody>
     <?php foreach ($barbeiros as $barbeiro): ?>
         <tr>
-        <td><?= e($barbeiro['nome']) ?></td>
-        <td><?= e($barbeiro['telefone']) ?></td>
-        <td><?= e($barbeiro['email']) ?></td>
-        <td><?= e($barbeiro['especialidade']) ?></td>
-        <td><?= $barbeiro['ativo'] ? 'Ativo' : 'Inativo' ?></td>
-        <td><a href="<?= url('barbeiros/' . $barbeiro['id'] . '/editar') ?>">Editar</a>&nbsp;&nbsp;&nbsp;<form
-                    class="inline" method="post" action="<?= url('barbeiros/' . $barbeiro['id'] . '/excluir') ?>"
+        <td><?= e($barbeiro->nome) ?></td>
+        <td><?= e($barbeiro->telefone) ?></td>
+        <td><?= e($barbeiro->email) ?></td>
+        <td><?= e($barbeiro->especialidade) ?></td>
+        <td><?= $barbeiro->ativo ? 'Ativo' : 'Inativo' ?></td>
+        <td><a href="<?= url('barbeiros/' . $barbeiro->id . '/editar') ?>">Editar</a>&nbsp;&nbsp;&nbsp;<form
+                    class="inline" method="post" action="<?= url('barbeiros/' . $barbeiro->id . '/excluir') ?>"
                     onsubmit="return confirm('Remover este barbeiro?');"><input type="hidden" name="csrf"
                                                                                 value="<?= Csrf::token() ?>">
                 <button class="link danger">Excluir</button>

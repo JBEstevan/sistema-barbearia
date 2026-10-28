@@ -7,29 +7,34 @@ final class Usuario
     {
     }
 
-    public function byEmail(string $email): ?array
+    public function byEmail(string $email): ?object
     {
-        $stmt = $this->db->prepare('SELECT id, nome, email, senha_hash, perfil FROM usuarios WHERE email = ? AND ativo = 1');
-        $stmt->execute([$email]);
-        return $stmt->fetch() ?: null;
+        $query = $this->db->prepare('SELECT id, nome, email, senha_hash, perfil FROM usuarios WHERE email = :email AND ativo = 1');
+        $query->bindValue(':email', $email, PDO::PARAM_STR);
+        $query->execute();
+        return $query->fetch() ?: null;
     }
 
     public function updateLastAccess(int $id): void
     {
-        $stmt = $this->db->prepare('UPDATE usuarios SET ultimo_acesso_em = NOW() WHERE id = ?');
-        $stmt->execute([$id]);
+        $query = $this->db->prepare('UPDATE usuarios SET ultimo_acesso_em = NOW() WHERE id = :id');
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        $query->execute();
     }
 
-    public function findForPassword(int $id): ?array
+    public function findForPassword(int $id): ?object
     {
-        $stmt = $this->db->prepare('SELECT id, senha_hash FROM usuarios WHERE id = ? AND ativo = 1');
-        $stmt->execute([$id]);
-        return $stmt->fetch() ?: null;
+        $query = $this->db->prepare('SELECT id, senha_hash FROM usuarios WHERE id = :id AND ativo = 1');
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetch() ?: null;
     }
 
     public function updatePassword(int $id, string $hash): void
     {
-        $stmt = $this->db->prepare('UPDATE usuarios SET senha_hash = ? WHERE id = ?');
-        $stmt->execute([$hash, $id]);
+        $query = $this->db->prepare('UPDATE usuarios SET senha_hash = :hash WHERE id = :id');
+        $query->bindValue(':hash', $hash, PDO::PARAM_STR);
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        $query->execute();
     }
 }
