@@ -9,14 +9,15 @@
     --dourado: #d4a413;
     --amarelo: #efb810;
     --amarelo-claro: #f3c332;
-    --preto: #000000
+    --preto: #000000;
+    --erro: #b6432f;
 }
 
 body {
     margin: 0;
     background: var(--cinza-escuro);
     font: 16px Arial, sans-serif;
-    color: var(--amarelo-claro);
+    color: var(--preto);
 }
 
 header {
@@ -188,7 +189,7 @@ th, td {
     width: 100%;
     max-width: 380px;
     background: var(--cinza);
-    color: var(--dourado);
+    color: var(--preto);
     padding: 32px;
     border-radius: 6px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
@@ -222,7 +223,7 @@ th, td {
     border: 1px solid var(--amarelo);
     border-radius: 4px;
     background: var(--cinza-claro);
-    color: var(--dourado);
+    color: var(--preto);
     font-size: 15px;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
@@ -241,7 +242,7 @@ th, td {
     display: block;
     min-height: 16px;
     margin-top: 5px;
-    color: red;
+    color: var(--erro);
     font-size: 13px;
 }
 
@@ -301,4 +302,62 @@ th, td {
 @media (prefers-reduced-motion: reduce) {
     .auth-card.tremer { animation: none; }
     .auth-cta { transition: none; }
+}
+
+/* ===== Tela de alterar senha ===== */
+
+:root {
+    --erro: #b6432f;
+    --ok: #3f7d53;
+}
+
+/* evita que a senha digitada fique por baixo do botão Mostrar/Ocultar */
+.campo-senha input {
+    padding-right: 76px;
+}
+
+.forca {
+    margin-top: 8px;
+}
+
+.forca-barra {
+    display: flex;
+    gap: 4px;
+}
+
+.forca-barra span {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--cinza-claro);
+    transition: background-color .2s ease;
+}
+
+.forca[data-nivel="1"] span:nth-child(-n+1) { background: var(--erro); }
+.forca[data-nivel="2"] span:nth-child(-n+2) { background: var(--amarelo); }
+.forca[data-nivel="3"] span:nth-child(-n+3) { background: var(--ok); }
+.forca[data-nivel="4"] span:nth-child(-n+4) { background: var(--ok); }
+
+.forca-texto {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.auth-voltar {
+    display: block;
+    margin-top: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--cinza-escuro);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.auth-voltar:hover {
+    color: var(--preto);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .forca-barra span { transition: none; }
 }

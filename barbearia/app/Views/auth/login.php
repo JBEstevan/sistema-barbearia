@@ -21,7 +21,7 @@
             <small class="campo-erro" data-erro-de="senha"></small>
         </div>
 
-        <button type="submit" class="auth-cta">
+        <button type="submit" class="auth-cta" data-enviando="Entrando...">
             <span class="auth-cta-texto">Entrar</span>
         </button>
     </form>
