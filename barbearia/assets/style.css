@@ -361,3 +361,359 @@ th, td {
 @media (prefers-reduced-motion: reduce) {
     .forca-barra span { transition: none; }
 }
+
+/* ===== Etapa 3: Barbeiros (lista + formulário) e componentes reutilizáveis ===== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* --- botões: um principal (CTA), um secundário, um de perigo --- */
+.btn-cta,
+.btn-secundario,
+.btn-perigo {
+    display: inline-block;
+    padding: 11px 20px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s ease, transform .1s ease;
+}
+
+.btn-cta {
+    background: var(--amarelo);
+    color: var(--preto);
+    border: 0;
+}
+
+.btn-cta:hover {
+    background: var(--dourado);
+}
+
+.btn-secundario {
+    background: transparent;
+    color: var(--cinza-escuro);
+    border: 2px solid var(--cinza-escuro);
+}
+
+.btn-secundario:hover {
+    background: rgba(0, 0, 0, .08);
+}
+
+.btn-perigo {
+    background: var(--erro);
+    color: #fff;
+    border: 0;
+}
+
+.btn-perigo:hover {
+    filter: brightness(.9);
+}
+
+.btn-cta:active,
+.btn-secundario:active,
+.btn-perigo:active {
+    transform: scale(.98);
+}
+
+.btn-cta[disabled] {
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+/* --- topo das páginas de lista --- */
+.cabecalho-pagina {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0;
+    font-size: 26px;
+    color: var(--amarelo-claro);
+}
+
+.busca {
+    margin-bottom: 14px;
+}
+
+.busca input {
+    width: 100%;
+    max-width: 360px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--amarelo);
+    border-radius: 6px;
+    background: var(--cinza-claro);
+    color: var(--preto);
+}
+
+.busca input:focus-visible {
+    outline: 2px solid var(--amarelo-claro);
+    outline-offset: 2px;
+}
+
+/* --- tabela --- */
+.tabela-wrap {
+    overflow-x: auto;
+    border-radius: 8px;
+    background: var(--cinza-claro);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+}
+
+.tabela {
+    background: transparent;
+    box-shadow: none;
+}
+
+.tabela th {
+    background: var(--cinza);
+    color: var(--preto);
+    font-size: 13px;
+    border-bottom: 2px solid var(--amarelo);
+    white-space: nowrap;
+}
+
+.tabela tbody tr {
+    transition: background-color .15s ease;
+}
+
+.tabela tbody tr:hover {
+    background: rgba(0, 0, 0, .06);
+}
+
+.tabela .vazio,
+.tabela .sem-resultado td {
+    text-align: center;
+    padding: 28px 12px;
+    color: var(--cinza-escuro);
+}
+
+.selo {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.selo-ativo {
+    background: var(--ok);
+    color: #fff;
+}
+
+.selo-inativo {
+    background: var(--cinza-escuro);
+    color: var(--cinza-claro);
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    white-space: nowrap;
+}
+
+.acao {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cinza-escuro);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.acao:hover {
+    color: var(--preto);
+}
+
+.acao.perigo {
+    color: var(--erro);
+}
+
+/* --- formulário em card --- */
+.form-card {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px;
+    background: var(--cinza);
+    color: var(--preto);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+
+.form-card.tremer {
+    animation: tremer .35s ease;
+}
+
+.form-titulo {
+    margin: 0 0 4px;
+    font-size: 24px;
+}
+
+.form-subtitulo {
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: var(--cinza-escuro);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+}
+
+.form-grid .cheio {
+    grid-column: 1 / -1;
+}
+
+/* o formulário usa o mesmo .campo do login; aqui só ajustamos as margens herdadas */
+.form-card .campo label {
+    margin-top: 0;
+}
+
+.form-card .campo input {
+    margin-top: 0;
+}
+
+.form-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* --- interruptor (checkbox "Ativo" com cara de chave liga/desliga) --- */
+.interruptor {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.interruptor input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+}
+
+.interruptor-trilho {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--cinza-escuro);
+    transition: background-color .2s ease;
+}
+
+.interruptor-trilho::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--cinza-claro);
+    transition: transform .2s ease;
+}
+
+.interruptor input:checked + .interruptor-trilho {
+    background: var(--ok);
+}
+
+.interruptor input:checked + .interruptor-trilho::after {
+    transform: translateX(20px);
+}
+
+.interruptor input:focus-visible + .interruptor-trilho {
+    outline: 2px solid var(--preto);
+    outline-offset: 2px;
+}
+
+/* --- janela de confirmação (<dialog>) --- */
+.modal {
+    width: calc(100% - 40px);
+    max-width: 380px;
+    padding: 24px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--cinza);
+    color: var(--preto);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .35);
+}
+
+.modal::backdrop {
+    background: rgba(0, 0, 0, .55);
+}
+
+.modal[open] {
+    animation: modal-entra .18s ease;
+}
+
+@keyframes modal-entra {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to { opacity: 1; transform: none; }
+}
+
+.modal-texto {
+    margin: 0 0 20px;
+    line-height: 1.4;
+}
+
+.modal-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+@media (max-width: 700px) {
+    /* o menu do cabeçalho passa a quebrar de linha em vez de estourar a tela */
+    nav {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card {
+        padding: 24px 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .form-card.tremer,
+    .modal[open] { animation: none; }
+
+    .btn-cta,
+    .btn-secundario,
+    .btn-perigo,
+    .tabela tbody tr,
+    .interruptor-trilho,
+    .interruptor-trilho::after { transition: none; }
+}

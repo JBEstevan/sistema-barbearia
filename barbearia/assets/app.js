@@ -8,13 +8,13 @@ document.querySelectorAll('.telefone').forEach((input) => {
     });
 });
 
-// Formulários de autenticação (login e alterar senha): mesma lógica para todos
+// Formulários com validação em tempo real: login, alterar senha e cadastros (data-validar)
 (function () {
-    document.querySelectorAll('form.auth-card').forEach(iniciarFormulario);
+    document.querySelectorAll('form.auth-card, form[data-validar]').forEach(iniciarFormulario);
 
     function iniciarFormulario(form) {
-        const botaoEnviar = form.querySelector('.auth-cta');
-        const textoBotao = form.querySelector('.auth-cta-texto');
+        const botaoEnviar = form.querySelector('[type="submit"]');
+        const textoBotao = botaoEnviar.querySelector('span') || botaoEnviar;
         const campos = Array.from(form.querySelectorAll('.campo input'));
 
         // 1) Mostrar/ocultar senha: cada botão controla o input do seu próprio campo
@@ -50,6 +50,8 @@ document.querySelectorAll('.telefone').forEach((input) => {
                 erro.textContent = 'Este campo é obrigatório.';
             } else if (input.validity.typeMismatch) {
                 erro.textContent = 'Digite um e-mail válido.';
+            } else if (input.validity.patternMismatch) {
+                erro.textContent = input.dataset.erroPadrao || 'Formato inválido.';
             } else if (input.validity.tooShort) {
                 erro.textContent = 'Use ao menos ' + input.minLength + ' caracteres.';
             } else if (input.validity.customError) {
@@ -118,4 +120,67 @@ document.querySelectorAll('.telefone').forEach((input) => {
             textoBotao.textContent = botaoEnviar.dataset.enviando || 'Enviando...';
         });
     }
+})();
+
+// Confirmação de exclusão: qualquer <form data-confirmar="mensagem"> abre uma janela antes de enviar
+(function () {
+    let dialogo = null;
+
+    function obterDialogo() {
+        if (dialogo) return dialogo;
+        dialogo = document.createElement('dialog');
+        dialogo.className = 'modal';
+        dialogo.innerHTML =
+            '<p class="modal-texto"></p>' +
+            '<div class="modal-acoes">' +
+            '<button type="button" class="btn-secundario" data-acao="cancelar" autofocus>Cancelar</button>' +
+            '<button type="button" class="btn-perigo" data-acao="confirmar">Excluir</button>' +
+            '</div>';
+        document.body.appendChild(dialogo);
+        // clicar fora da caixa (no fundo escuro) também cancela
+        dialogo.addEventListener('click', function (evento) {
+            if (evento.target === dialogo) dialogo.close();
+        });
+        return dialogo;
+    }
+
+    document.querySelectorAll('form[data-confirmar]').forEach(function (form) {
+        form.addEventListener('submit', function (evento) {
+            evento.preventDefault();
+            const d = obterDialogo();
+            d.querySelector('.modal-texto').textContent = form.dataset.confirmar;
+            d.querySelector('[data-acao="cancelar"]').onclick = function () { d.close(); };
+            d.querySelector('[data-acao="confirmar"]').onclick = function () {
+                d.close();
+                form.submit(); // envia direto, sem disparar este evento de novo
+            };
+            d.showModal();
+        });
+    });
+})();
+
+// Busca na tabela: <input data-filtro="#id-da-tabela"> esconde as linhas que não combinam
+(function () {
+    function normalizar(texto) {
+        // minúsculas e sem acento, para "jose" achar "José"
+        return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    document.querySelectorAll('input[data-filtro]').forEach(function (campo) {
+        const tabela = document.querySelector(campo.dataset.filtro);
+        if (!tabela) return;
+        const linhas = Array.from(tabela.querySelectorAll('tbody tr[data-linha]'));
+        const aviso = tabela.querySelector('.sem-resultado');
+
+        campo.addEventListener('input', function () {
+            const termo = normalizar(campo.value.trim());
+            let visiveis = 0;
+            linhas.forEach(function (linha) {
+                const combina = normalizar(linha.textContent).indexOf(termo) !== -1;
+                linha.hidden = !combina;
+                if (combina) visiveis++;
+            });
+            if (aviso) aviso.hidden = visiveis !== 0;
+        });
+    });
 })();
