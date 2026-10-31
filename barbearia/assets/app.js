@@ -52,6 +52,12 @@ document.querySelectorAll('.telefone').forEach((input) => {
                 erro.textContent = 'Digite um e-mail válido.';
             } else if (input.validity.patternMismatch) {
                 erro.textContent = input.dataset.erroPadrao || 'Formato inválido.';
+            } else if (input.validity.badInput) {
+                erro.textContent = 'Digite um número válido.';
+            } else if (input.validity.rangeUnderflow || input.validity.rangeOverflow) {
+                erro.textContent = input.dataset.erroFaixa || 'Valor fora do limite permitido.';
+            } else if (input.validity.stepMismatch) {
+                erro.textContent = input.dataset.erroPasso || 'Valor não permitido.';
             } else if (input.validity.tooShort) {
                 erro.textContent = 'Use ao menos ' + input.minLength + ' caracteres.';
             } else if (input.validity.customError) {

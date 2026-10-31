@@ -717,3 +717,54 @@ th, td {
     .interruptor-trilho,
     .interruptor-trilho::after { transition: none; }
 }
+
+/* ===== Etapa 4: Serviços (só o que é novo; o resto vem da Etapa 3) ===== */
+
+/* colunas numéricas da tabela alinhadas à direita */
+.tabela .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* campo com unidade dentro: "R$" antes do número, "min" depois */
+.campo-unidade {
+    position: relative;
+}
+
+.campo-unidade .unidade {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cinza-escuro);
+    pointer-events: none;
+}
+
+.campo-unidade .prefixo {
+    left: 12px;
+}
+
+.campo-unidade .sufixo {
+    right: 12px;
+}
+
+.campo-unidade input.com-prefixo {
+    padding-left: 40px;
+}
+
+.campo-unidade input.com-sufixo {
+    padding-right: 48px;
+}
+
+/* tira as setinhas do campo numérico: elas ficariam por cima da unidade */
+.campo-unidade input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.campo-unidade input[type="number"]::-webkit-inner-spin-button,
+.campo-unidade input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
