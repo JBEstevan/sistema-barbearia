@@ -15,7 +15,7 @@ document.querySelectorAll('.telefone').forEach((input) => {
     function iniciarFormulario(form) {
         const botaoEnviar = form.querySelector('[type="submit"]');
         const textoBotao = botaoEnviar.querySelector('span') || botaoEnviar;
-        const campos = Array.from(form.querySelectorAll('.campo input'));
+        const campos = Array.from(form.querySelectorAll('.campo input, .campo select'));
 
         // 1) Mostrar/ocultar senha: cada botão controla o input do seu próprio campo
         form.querySelectorAll('.alternar-senha').forEach(function (botao) {

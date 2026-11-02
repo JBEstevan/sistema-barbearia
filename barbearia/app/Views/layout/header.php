@@ -10,7 +10,8 @@
 <?php if (Auth::check()): ?>
     <header><strong><?= e($config['app_name']) ?></strong>
     <nav><a href="<?= url('barbeiros') ?>">Barbeiros</a><a href="<?= url('servicos') ?>">Serviços</a>
-    <a href="<?= url('agendamentos') ?>">Agendamentos</a><a href="<?= url('senha') ?>">Alterar
+    <a href="<?= url('agendamentos') ?>">Agendamentos</a>
+    <?php if (Auth::user()['perfil'] === 'ADMINISTRADOR'): ?><a href="<?= url('usuarios/novo') ?>">Novo admin</a><?php endif; ?><a href="<?= url('senha') ?>">Alterar
             senha</a><span><?= e(Auth::user()['nome']) ?></span>
         <form method="post" action="<?= url('logout') ?>"><input type="hidden" name="csrf" value="<?= Csrf::token() ?>">
             <button>Sair</button>

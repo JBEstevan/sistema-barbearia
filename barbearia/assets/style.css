@@ -217,7 +217,8 @@ th, td {
     font-size: 14px;
 }
 
-.campo input {
+.campo input,
+.campo select {
     width: 100%;
     padding: 11px 12px;
     border: 1px solid var(--amarelo);
@@ -228,14 +229,16 @@ th, td {
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.campo input:focus-visible {
+.campo input:focus-visible,
+.campo select:focus-visible {
     outline: none;
     border-color: var(--cinza-claro);
     box-shadow: 0 0 0 3px rgba(169, 113, 63, .25);
 }
 
-.campo.invalido input {
-    border-color: var(--dourado);
+.campo.invalido input,
+.campo.invalido select {
+    border-color: var(--erro);
 }
 
 .campo-erro {
@@ -587,7 +590,8 @@ th, td {
     margin-top: 0;
 }
 
-.form-card .campo input {
+.form-card .campo input,
+.form-card .campo select {
     margin-top: 0;
 }
 
@@ -767,4 +771,16 @@ th, td {
 .campo-unidade input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+/* agendamentos já realizados ficam apagados na lista */
+.tabela tr.passado {
+    opacity: .55;
+}
+
+/* select, data e hora têm altura própria do navegador: iguala aos campos de texto */
+.campo select,
+.campo input[type="date"],
+.campo input[type="time"] {
+    height: 42px;
 }
