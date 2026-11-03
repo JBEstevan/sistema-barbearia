@@ -1,6 +1,6 @@
 # Sistema de Gestão de Barbearia
 
-Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma barbearia, implementando arquitetura MVC nativa, autenticação por sessão, controle de profissionais, catálogo de serviços e operação de agendamentos com validações de conflito de horários no servidor.
+Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma barbearia, implementando arquitetura MVC nativa, autenticação por sessão, cadastro de administradores, controle de profissionais, catálogo de serviços e operação de agendamentos com validações de conflito de horários no servidor.
 
 ---
 
@@ -8,9 +8,9 @@ Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma bar
 
 | Integrante | Papel Principal | Tarefas e CRUDs Desenvolvidos |
 | :--- | :--- | :--- |
-| **Gabriel Lidani** | Segurança & Equipe | Criação da estrutura base do Roteador (`index.php`), implementação da Autenticação/Sessão segura (`Auth`, `Csrf`, `Database`), telas de login/senha e desenvolvimento completo do **CRUD de Barbeiros** (`BarbeiroController`, `Barbeiro`, views e validações). |
-| **Antony Rinaldi** | Interface & Catálogo | Criação do arquivo base de estilo visual (`style.css`) e desenvolvimento completo do **CRUD de Serviços** (`ServicoController`, `Servicos`, views com validações de preço positivo e duração). |
-| **Juan Estevan** | Operação (Agendamentos) | Desenvolvimento completo do **CRUD de Agendamentos** (`AgendamentoController`, `Agendamento`, views de listagem e formulário) com a **regra de negócio de validação no PHP para evitar horário duplicado no mesmo barbeiro**, atualização do script do banco com seeds e documentação do projeto no README. |
+| **Gabriel Lidani** | Segurança & Equipe | Criação da estrutura base do Roteador (`index.php`), implementação da Autenticação/Sessão segura (`Auth`, `Csrf`, `Database`), telas de login/senha, refatoração do acesso a dados com `PDO::FETCH_OBJ` e `bindValue` tipado (`PDO::PARAM_*`) e desenvolvimento completo do **CRUD de Barbeiros** (`BarbeiroController`, `Barbeiro`, views e validações). |
+| **Antony Rinaldi** | Interface & Catálogo | Criação e padronização visual (`style.css`), interações dinâmicas em JavaScript (`app.js`: busca em tempo real nas tabelas, modal `<dialog>` de confirmação de exclusão, medidor de força de senha e validação visual de formulários), desenvolvimento completo do **CRUD de Serviços** (`ServicoController`, `Servicos`, views com validações de preço positivo e duração) e módulo de **Cadastro de Administrador** (`auth/cadastro.php`). |
+| **Juan Estevan** | Operação (Agendamentos) | Desenvolvimento completo do **CRUD de Agendamentos** (`AgendamentoController`, `Agendamento`, views de listagem e formulário) com a **regra de negócio de validação no PHP para evitar horário duplicado no mesmo barbeiro**, atualização do script do banco com seeds, integração/merge das branches da equipe e documentação do projeto no `README.md`. |
 
 ---
 
@@ -18,7 +18,7 @@ Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma bar
 
 - **PHP 8.0+** (com extensões `pdo_mysql`, `mbstring`, `session`)
 - **MySQL 8.0+** ou **MariaDB 10.4+**
-- **Servidor Web:** Apache (XAMPP / Laragon / WampServer)
+- **Servidor Web:** Apache (XAMPP / Laragon / WampServer) ou Servidor Embutido do PHP
 - **Navegador Web** (Chrome, Firefox, Edge, etc.)
 
 ---
@@ -33,8 +33,8 @@ cd sistema-barbearia
 
 ### Passo 2: Importar o Banco de Dados
 1. Abra o **phpMyAdmin** (`http://localhost/phpmyadmin`) ou o terminal do MySQL.
-2. Importe o script SQL localizado em `barbearia/database/barbearia.sql` (ou `barbearia.sql` na raiz).
-3. O script criará o banco `barbearia` com as 4 tabelas relacionais (`usuarios`, `barbeiros`, `servicos`, `agendamentos`) e dados de teste.
+2. Importe o script SQL localizado em `barbearia/database/barbearia.sql`.
+3. O script configurará o charset `utf8mb4` e criará o banco `barbearia` com as 4 tabelas relacionais (`usuarios`, `barbeiros`, `servicos`, `agendamentos`) e dados iniciais de teste.
 
 ### Passo 3: Configurar a Conexão
 Se necessário, ajuste as credenciais de banco no arquivo `barbearia/config/config.php`:
@@ -81,7 +81,7 @@ Copie a pasta para `C:\xampp\htdocs\` e acesse **`http://localhost/sistema-barbe
 barbearia/
 ├── app/
 │   ├── Controllers/
-│   │   ├── AuthController.php          # Login, Logout e Troca de Senha
+│   │   ├── AuthController.php          # Login, Logout, Troca de Senha e Cadastro de Admin
 │   │   ├── BarbeiroController.php      # CRUD de Barbeiros
 │   │   ├── ServicoController.php       # CRUD de Serviços
 │   │   └── AgendamentoController.php   # CRUD de Agendamentos (com validação de conflito)
@@ -97,18 +97,18 @@ barbearia/
 │   │   ├── Servicos.php
 │   │   └── Agendamento.php
 │   └── Views/
-│       ├── auth/                       # Login e Alterar Senha
+│       ├── auth/                       # Login, Alterar Senha e Cadastro de Admin (cadastro.php)
 │       ├── barbeiros/                  # Listagem e Formulário de Barbeiros
 │       ├── servicos/                   # Listagem e Formulário de Serviços
 │       ├── agendamentos/               # Listagem e Formulário de Agendamentos
 │       └── layout/                     # Header e Footer
 ├── assets/
-│   ├── style.css                       # Folha de estilos
-│   └── app.js                          # Máscara de telefone e interações
+│   ├── style.css                       # Folha de estilos e variáveis CSS (:root)
+│   └── app.js                          # Máscara de telefone, validação em tempo real, busca e modais
 ├── config/
 │   └── config.php                      # Configuração do banco e aplicação
 ├── database/
-│   └── barbearia.sql                   # Criação do banco e seeds
+│   └── barbearia.sql                   # Criação do banco (utf8mb4) e seeds
 └── index.php                           # Front Controller & Rotas
 ```
 
@@ -119,20 +119,23 @@ barbearia/
 Todas as validações são executadas no servidor pelo PHP:
 1. **Agendamentos:**
    - Validação de nome do cliente e telefone brasileiro formatado com regex.
-   - Validação de seleção de barbeiro e serviço válidos.
-   - **Verificação de conflito de horário no Barbeiro:** O PHP consulta o banco antes de salvar para garantir que o barbeiro escolhido não possui outro agendamento no mesmo horário.
+   - Validação de seleção de barbeiro e serviço válidos, impedindo agendamento caso não existam barbeiros ou serviços ativos.
+   - **Verificação de conflito de horário no Barbeiro:** O PHP consulta o banco antes de salvar (`Agendamento::hasConflict`) para garantir que o barbeiro escolhido não possui outro agendamento no mesmo horário (permitindo manter o horário ao editar o próprio registro).
 2. **Serviços:**
-   - Nome obrigatório (<= 120 chars).
-   - Preço validado como numérico e estritamente positivo.
-   - Duração validada entre 1 e 180 minutos.
+   - Nome obrigatório (até 120 caracteres).
+   - Preço validado como numérico e estritamente positivo (`0.01` a `9999.99`).
+   - Duração validada como inteiro entre `1` e `180` minutos.
 3. **Barbeiros:**
-   - Nome, telefone com regex e validação de e-mail único.
-4. **Segurança Geral:**
-   - Proteção CSRF com token validado em todas as requisições POST.
-   - Hash de senhas com `password_hash()` (Bcrypt).
+   - Nome obrigatório, telefone com máscara/regex `(47) 91234-5678` e validação de e-mail único.
+4. **Usuários / Administradores:**
+   - Cadastro de novos administradores restrito a usuários logados com perfil `ADMINISTRADOR`.
+   - Verificação de e-mail único (`Usuario::emailExists`), senha com mínimo de 8 caracteres + confirmação e preservação dos dados digitados em sessão (`$_SESSION['old']`) em caso de erro.
+5. **Segurança Geral:**
+   - Proteção CSRF com token validado (`hash_equals`) em todas as requisições POST.
+   - Hash de senhas com `password_hash()` (Bcrypt) e regeneração de ID de sessão no login (`session_regenerate_id`).
    - Consultas com Prepared Statements no PDO para prevenção contra SQL Injection.
    - Sanitização de saída com `htmlspecialchars` contra XSS.
-5. **Acesso a dados (PDO):**
+6. **Acesso a Dados (PDO):**
    - A conexão (`Database::connect`) define `PDO::FETCH_OBJ` como modo padrão: as consultas devolvem **objetos** (`$barbeiro->nome`) em vez de arrays (`$barbeiro['nome']`).
    - Nos Models de `Usuario` e `Barbeiro`, as consultas usam `prepare` + `bindValue` (com tipo `PDO::PARAM_*`) + `execute`.
    - `Barbeiro::delete()` devolve o número de linhas removidas (`rowCount()`), permitindo avisar quando o registro não existe.
