@@ -37,4 +37,17 @@ final class Usuario
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute();
     }
+
+    public function emailExists(string $email): bool
+    {
+        $stmt = $this->db->prepare('SELECT 1 FROM usuarios WHERE email = ?');
+        $stmt->execute([$email]);
+        return (bool)$stmt->fetchColumn();
+    }
+
+    public function create(string $nome, string $email, string $hash): void
+    {
+        $stmt = $this->db->prepare("INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES (?, ?, ?, 'ADMINISTRADOR')");
+        $stmt->execute([$nome, $email, $hash]);
+    }
 }

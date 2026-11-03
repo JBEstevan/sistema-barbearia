@@ -34,6 +34,10 @@ try {
         $auth->passwordForm();
     } elseif ($route === 'senha' && $method === 'POST') {
         $auth->changePassword();
+    } elseif ($route === 'usuarios/novo' && $method === 'GET') {
+        $auth->registerForm();
+    } elseif ($route === 'usuarios' && $method === 'POST') {
+        $auth->register();
     } elseif ($route === 'barbeiros' && $method === 'GET') {
         $barbeiros->index();
     } elseif ($route === 'barbeiros/novo' && $method === 'GET') {

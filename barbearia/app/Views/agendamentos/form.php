@@ -2,68 +2,85 @@
 require __DIR__ . '/../layout/header.php';
 $editando = $agendamento !== null;
 
-$dataValor = '';
-$horaValor = '';
-if ($editando && !empty($agendamento->data_hora)) {
-    $dt = new DateTime($agendamento->data_hora);
-    $dataValor = $dt->format('Y-m-d');
-    $horaValor = $dt->format('H:i');
-} else {
-    $dataValor = date('Y-m-d');
-    $horaValor = date('H:i');
-}
+$dt = $editando && !empty($agendamento->data_hora) ? new DateTime($agendamento->data_hora) : new DateTime();
+$dataValor = $dt->format('Y-m-d');
+$horaValor = $dt->format('H:i');
 ?>
-<section class="card">
-    <h1><?= e($titulo) ?></h1>
-    <form method="post" action="<?= url($editando ? 'agendamentos/' . $agendamento->id . '/atualizar' : 'agendamentos') ?>">
-        <input type="hidden" name="csrf" value="<?= Csrf::token() ?>">
+<form class="form-card" method="post"
+      action="<?= url($editando ? 'agendamentos/' . $agendamento->id . '/atualizar' : 'agendamentos') ?>" data-validar novalidate>
+    <input type="hidden" name="csrf" value="<?= Csrf::token() ?>">
 
-        <label>Nome do cliente
-            <input name="cliente_nome" maxlength="120" required value="<?= e($agendamento->cliente_nome ?? '') ?>">
-        </label>
+    <h1 class="form-titulo"><?= e($titulo) ?></h1>
+    <p class="form-subtitulo">Os campos marcados com * são obrigatórios.</p>
 
-        <label>Telefone do cliente
-            <input name="cliente_telefone" class="telefone" maxlength="15" required placeholder="(47) 00000-0000"
+    <div class="form-grid">
+        <div class="campo">
+            <label for="cliente_nome">Nome do cliente *</label>
+            <input id="cliente_nome" name="cliente_nome" maxlength="120" required autocomplete="off"
+                   value="<?= e($agendamento->cliente_nome ?? '') ?>">
+            <small class="campo-erro"></small>
+        </div>
+
+        <div class="campo">
+            <label for="cliente_telefone">Telefone do cliente *</label>
+            <input id="cliente_telefone" name="cliente_telefone" class="telefone" maxlength="15" inputmode="numeric" required
+                   pattern="\(\d{2}\) \d{5}-\d{4}" placeholder="(47) 91234-5678"
+                   data-erro-padrao="Use o formato (47) 91234-5678."
                    value="<?= e($agendamento->cliente_telefone ?? '') ?>">
-            <small>Formato: (47) 00000-0000</small>
-        </label>
+            <small class="campo-erro"></small>
+        </div>
 
-        <label>Barbeiro
-            <select name="barbeiro_id" required>
-                <option value="">Selecione um barbeiro...</option>
+        <div class="campo">
+            <label for="barbeiro_id">Barbeiro *</label>
+            <select id="barbeiro_id" name="barbeiro_id" required>
+                <option value="">Selecione...</option>
                 <?php foreach ($barbeiros as $b): ?>
                     <option value="<?= (int)$b->id ?>" <?= ($editando && (int)$agendamento->barbeiro_id === (int)$b->id) ? 'selected' : '' ?>>
-                        <?= e($b->nome) ?> <?= !empty($b->especialidade) ? '— ' . e($b->especialidade) : '' ?>
+                        <?= e($b->nome) ?><?= !empty($b->especialidade) ? ' — ' . e($b->especialidade) : '' ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-        </label>
+            <small class="campo-erro"></small>
+        </div>
 
-        <label>Serviço
-            <select name="servico_id" required>
-                <option value="">Selecione um serviço...</option>
+        <div class="campo">
+            <label for="servico_id">Serviço *</label>
+            <select id="servico_id" name="servico_id" required>
+                <option value="">Selecione...</option>
                 <?php foreach ($servicos as $s): ?>
                     <option value="<?= (int)$s->id ?>" <?= ($editando && (int)$agendamento->servico_id === (int)$s->id) ? 'selected' : '' ?>>
-                        <?= e($s->nome) ?> (R$ <?= number_format((float)$s->preco, 2, ',', '.') ?> - <?= (int)$s->duracao ?> min)
+                        <?= e($s->nome) ?> (R$ <?= number_format((float)$s->preco, 2, ',', '.') ?> · <?= (int)$s->duracao ?> min)
                     </option>
                 <?php endforeach; ?>
             </select>
-        </label>
+            <small class="campo-erro"></small>
+        </div>
 
-        <label>Data
-            <input name="data" type="date" required value="<?= e($dataValor) ?>">
-        </label>
+        <div class="campo">
+            <label for="data">Data *</label>
+            <input id="data" name="data" type="date" required value="<?= e($dataValor) ?>">
+            <small class="campo-erro"></small>
+        </div>
 
-        <label>Horário
-            <input name="hora" type="time" required value="<?= e($horaValor) ?>">
-        </label>
+        <div class="campo">
+            <label for="hora">Horário *</label>
+            <input id="hora" name="hora" type="time" required value="<?= e($horaValor) ?>">
+            <small class="campo-erro"></small>
+        </div>
 
-        <label>Observações
-            <input name="observacoes" maxlength="255" placeholder="Opcional" value="<?= e($agendamento->observacoes ?? '') ?>">
-        </label>
+        <div class="campo cheio">
+            <label for="observacoes">Observações</label>
+            <input id="observacoes" name="observacoes" maxlength="255" placeholder="Opcional" autocomplete="off"
+                   value="<?= e($agendamento->observacoes ?? '') ?>">
+            <small class="campo-erro"></small>
+        </div>
+    </div>
 
-        <button type="submit">Salvar</button>
-        <a class="cancelar" href="<?= url('agendamentos') ?>">Cancelar</a>
-    </form>
-</section>
+    <div class="form-acoes">
+        <button type="submit" class="btn-cta" data-enviando="Salvando...">
+            <span><?= $editando ? 'Salvar alterações' : 'Agendar horário' ?></span>
+        </button>
+        <a class="btn-secundario" href="<?= url('agendamentos') ?>">Cancelar</a>
+    </div>
+</form>
 <?php require __DIR__ . '/../layout/footer.php'; ?>
