@@ -1,12 +1,31 @@
 <?php
 declare(strict_types=1);
 
+// No servidor embutido do PHP (php -S), entrega arquivos estáticos reais (CSS, JS, imagens) diretamente
+if (PHP_SAPI === 'cli-server') {
+    $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $staticFile = __DIR__ . $uriPath;
+    if ($uriPath !== '/' && is_file($staticFile)) {
+        return false;
+    }
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
-foreach (glob(__DIR__ . '/app/Core/*.php') as $file) require_once $file;
-foreach (glob(__DIR__ . '/app/Models/*.php') as $file) require_once $file;
-foreach (glob(__DIR__ . '/app/Controllers/*.php') as $file) require_once $file;
+// Autoload via Composer (com fallback caso vendor/ ainda não tenha sido gerado)
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} else {
+    foreach (glob(__DIR__ . '/app/Core/*.php') as $file) require_once $file;
+    foreach (glob(__DIR__ . '/app/Models/*.php') as $file) require_once $file;
+    foreach (glob(__DIR__ . '/app/Controllers/*.php') as $file) require_once $file;
+}
+
+// Package PHP (vlucas/phpdotenv): carrega variáveis de ambiente do arquivo .env se existir
+if (class_exists(\Dotenv\Dotenv::class)) {
+    \Dotenv\Dotenv::createImmutable(__DIR__)->safeLoad();
+}
 
 $config = require __DIR__ . '/config/config.php';
 Auth::start();
@@ -23,8 +42,20 @@ try {
     $servicos = new ServicoController($servicosModel);
     $agendamentos = new AgendamentoController($agendamentoModel, $barbeiroModel, $servicosModel);
 
-    $route = trim((string)($_GET['r'] ?? ''), '/');
-    $method = $_SERVER['REQUEST_METHOD'];
+    // Suporte a URL transparente (/barbeiros, /agendamentos/novo) e via .htaccess (?r=...)
+    if (isset($_GET['r']) && $_GET['r'] !== '') {
+        $route = trim((string)$_GET['r'], '/');
+    } else {
+        $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+        $basePath = base_path();
+        if ($basePath !== '' && str_starts_with($requestPath, $basePath)) {
+            $requestPath = substr($requestPath, strlen($basePath));
+        }
+        $requestPath = preg_replace('#^/index\.php/?#', '/', $requestPath) ?? $requestPath;
+        $route = trim(rawurldecode($requestPath), '/');
+    }
+
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
     if ($route === '' || $route === 'login') {
         $method === 'POST' ? $auth->login() : $auth->form();
@@ -80,12 +111,23 @@ try {
         echo 'Página não encontrada.';
     }
 } catch (PDOException $e) {
-    error_log('Erro de banco de dados: ' . $e->getMessage());
+    if (class_exists(\Monolog\Logger::class)) {
+        $log = new \Monolog\Logger('barbearia');
+        $log->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/storage/logs/app.log', \Monolog\Level::Error));
+        $log->error('Erro de banco de dados: ' . $e->getMessage());
+    } else {
+        error_log('Erro de banco de dados: ' . $e->getMessage());
+    }
     http_response_code(500);
     exit('Não foi possível conectar ao banco. Confira config/config.php.');
 } catch (Throwable $e) {
-    // Qualquer outro erro é registrasndo no log.
-    error_log('Erro inesperado: ' . $e->getMessage());
+    if (class_exists(\Monolog\Logger::class)) {
+        $log = new \Monolog\Logger('barbearia');
+        $log->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/storage/logs/app.log', \Monolog\Level::Error));
+        $log->error('Erro inesperado: ' . $e->getMessage());
+    } else {
+        error_log('Erro inesperado: ' . $e->getMessage());
+    }
     http_response_code(500);
-    exit('ocorreu um erro inesperado');
+    exit('Ocorreu um erro inesperado.');
 }

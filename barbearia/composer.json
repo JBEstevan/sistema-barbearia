@@ -1,0 +1,26 @@
+{
+    "name": "equipe/sistema-barbearia",
+    "description": "Sistema de Gestao de Barbearia em PHP 8+ com padrao MVC, PDO e Composer",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0",
+        "vlucas/phpdotenv": "^5.6",
+        "monolog/monolog": "^3.0"
+    },
+    "autoload": {
+        "classmap": [
+            "app/Core/",
+            "app/Models/",
+            "app/Controllers/"
+        ],
+        "files": [
+            "app/Core/helpers.php",
+            "app/Core/view.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
+

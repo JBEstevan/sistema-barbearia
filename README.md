@@ -1,6 +1,6 @@
 # Sistema de Gestão de Barbearia
 
-Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma barbearia, implementando arquitetura MVC nativa, autenticação por sessão, cadastro de administradores, controle de profissionais, catálogo de serviços e operação de agendamentos com validações de conflito de horários no servidor.
+Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma barbearia, implementando arquitetura **MVC** orientada a objetos, **Composer com Autoload** e packages externos (`vlucas/phpdotenv` e `monolog/monolog`), **sistema de rotas com URLs transparentes**, autenticação por sessão, cadastro de administradores, controle de profissionais, catálogo de serviços e operação de agendamentos com validações de conflito de horários no servidor.
 
 ---
 
@@ -10,60 +10,63 @@ Sistema web desenvolvido em **PHP 8+** e **MySQL** para gerenciamento de uma bar
 | :--- | :--- | :--- |
 | **Gabriel Lidani** | Segurança & Equipe | Criação da estrutura base do Roteador (`index.php`), implementação da Autenticação/Sessão segura (`Auth`, `Csrf`, `Database`), telas de login/senha, refatoração do acesso a dados com `PDO::FETCH_OBJ` e `bindValue` tipado (`PDO::PARAM_*`) e desenvolvimento completo do **CRUD de Barbeiros** (`BarbeiroController`, `Barbeiro`, views e validações). |
 | **Antony Rinaldi** | Interface & Catálogo | Criação e padronização visual (`style.css`), interações dinâmicas em JavaScript (`app.js`: busca em tempo real nas tabelas, modal `<dialog>` de confirmação de exclusão, medidor de força de senha e validação visual de formulários), desenvolvimento completo do **CRUD de Serviços** (`ServicoController`, `Servicos`, views com validações de preço positivo e duração) e módulo de **Cadastro de Administrador** (`auth/cadastro.php`). |
-| **Juan Estevan** | Operação (Agendamentos) | Desenvolvimento completo do **CRUD de Agendamentos** (`AgendamentoController`, `Agendamento`, views de listagem e formulário) com a **regra de negócio de validação no PHP para evitar horário duplicado no mesmo barbeiro**, atualização do script do banco com seeds, integração/merge das branches da equipe e documentação do projeto no `README.md`. |
+| **Juan Estevan** | Operação (Agendamentos) | Desenvolvimento completo do **CRUD de Agendamentos** (`AgendamentoController`, `Agendamento`, views de listagem e formulário) com a **regra de negócio de validação no PHP para evitar horário duplicado no mesmo barbeiro**, configuração do **Composer com Autoload** e URLs transparentes, atualização do script do banco com seeds, integração/merge das branches da equipe e documentação do projeto no `README.md`. |
 
 ---
 
 ## 🚀 2. Requisitos do Sistema
 
-- **PHP 8.0+** (com extensões `pdo_mysql`, `mbstring`, `session`)
+- **PHP 8.0+** (com extensões `pdo_mysql`, `mbstring`, `session`, `zip`)
+- **Composer 2.x** (para gerenciamento de dependências e Autoload)
 - **MySQL 8.0+** ou **MariaDB 10.4+**
-- **Servidor Web:** Apache (XAMPP / Laragon / WampServer) ou Servidor Embutido do PHP
+- **Servidor Web:** Apache com `mod_rewrite` (XAMPP / Laragon / WampServer) ou Servidor Embutido do PHP (`php -S`)
 - **Navegador Web** (Chrome, Firefox, Edge, etc.)
 
 ---
 
 ## ⚙️ 3. Instalação e Configuração
 
-### Passo 1: Clonar o Repositório
+### Passo 1: Clonar o Repositório e Instalar Dependências (Composer)
 ```bash
 git clone https://github.com/JBEstevan/sistema-barbearia.git
-cd sistema-barbearia
+cd sistema-barbearia/barbearia
+composer install
 ```
+> O Composer gerará a pasta `vendor/` com o **Autoload** (`vendor/autoload.php`) de todas as classes (`Core`, `Models`, `Controllers`) e instalará os pacotes **`vlucas/phpdotenv`** (variáveis de ambiente `.env`) e **`monolog/monolog`** (registro estruturado de logs de erro).
 
 ### Passo 2: Importar o Banco de Dados
 1. Abra o **phpMyAdmin** (`http://localhost/phpmyadmin`) ou o terminal do MySQL.
 2. Importe o script SQL localizado em `barbearia/database/barbearia.sql`.
 3. O script configurará o charset `utf8mb4` e criará o banco `barbearia` com as 4 tabelas relacionais (`usuarios`, `barbeiros`, `servicos`, `agendamentos`) e dados iniciais de teste.
 
-### Passo 3: Configurar a Conexão
-Se necessário, ajuste as credenciais de banco no arquivo `barbearia/config/config.php`:
+### Passo 3: Configurar a Conexão (`.env` ou `config/config.php`)
+Você pode copiar o arquivo `barbearia/.env.example` para `barbearia/.env` (carregado automaticamente pelo pacote `vlucas/phpdotenv`) ou ajustar diretamente o arquivo `barbearia/config/config.php`:
 ```php
 <?php
 declare(strict_types=1);
 
 return [
-    'app_name' => 'Barbearia',
+    'app_name' => $_ENV['APP_NAME'] ?? 'Barbearia',
     'db' => [
-        'host'     => '127.0.0.1',
-        'port'     => '3306',
-        'name'     => 'barbearia',
-        'user'     => 'root',
-        'password' => '', // Senha do seu MySQL (se tiver)
+        'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
+        'port' => $_ENV['DB_PORT'] ?? '3306',
+        'name' => $_ENV['DB_NAME'] ?? 'barbearia',
+        'user' => $_ENV['DB_USER'] ?? 'root',
+        'password' => $_ENV['DB_PASS'] ?? '', // Senha do seu MySQL (se tiver)
     ],
 ];
 ```
 
 ### Passo 4: Executar o Projeto
 
-#### Via Servidor Embutido do PHP:
+#### Via Servidor Embutido do PHP (no terminal do VS Code ou PowerShell):
 ```bash
 cd barbearia
-php -S localhost:8000
+C:\xampp\php\php.exe -S localhost:8000
 ```
 Acesse no navegador: **`http://localhost:8000`**
 
-#### Via XAMPP:
+#### Via XAMPP (Apache):
 Copie a pasta para `C:\xampp\htdocs\` e acesse **`http://localhost/sistema-barbearia/barbearia/`**.
 
 ---
@@ -75,7 +78,7 @@ Copie a pasta para `C:\xampp\htdocs\` e acesse **`http://localhost/sistema-barbe
 
 ---
 
-## 🏗️ 5. Estrutura do Projeto (Padrão MVC em PHP Nativo)
+## 🏗️ 5. Estrutura do Projeto (Padrão MVC + Composer + Rotas Transparentes)
 
 ```text
 barbearia/
@@ -89,7 +92,7 @@ barbearia/
 │   │   ├── Auth.php                    # Controle de Sessão e Login
 │   │   ├── Csrf.php                    # Proteção contra ataques CSRF
 │   │   ├── Database.php                # Conexão PDO segura (retorna objetos: FETCH_OBJ)
-│   │   ├── helpers.php                 # Funções auxiliares (url, flash, redirect, e)
+│   │   ├── helpers.php                 # Funções auxiliares e gerador de URLs transparentes
 │   │   └── view.php                    # Renderização de views
 │   ├── Models/
 │   │   ├── Usuario.php
@@ -106,10 +109,14 @@ barbearia/
 │   ├── style.css                       # Folha de estilos e variáveis CSS (:root)
 │   └── app.js                          # Máscara de telefone, validação em tempo real, busca e modais
 ├── config/
-│   └── config.php                      # Configuração do banco e aplicação
+│   └── config.php                      # Configuração do banco e aplicação (integrada ao .env)
 ├── database/
 │   └── barbearia.sql                   # Criação do banco (utf8mb4) e seeds
-└── index.php                           # Front Controller & Rotas
+├── .env.example                        # Exemplo de variáveis de ambiente (vlucas/phpdotenv)
+├── .htaccess                           # Reescrita de URLs transparentes no Apache
+├── composer.json                       # Configuração de Autoload e packages (phpdotenv, monolog)
+├── composer.lock                       # Versões exatas travadas dos pacotes Composer
+└── index.php                           # Front Controller & Roteador de URLs transparentes
 ```
 
 ---

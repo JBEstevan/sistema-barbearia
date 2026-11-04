@@ -1,0 +1,6 @@
+/barbearia/vendor/
+/barbearia/.env
+/barbearia/storage/logs/*.log
+.idea/
+sistema-barbearia.code-workspace
+
